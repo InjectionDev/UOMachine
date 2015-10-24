@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace UOMachine.UI
 {
-    public class MenuButton : Button
+    internal class MenuButton : Button
     {
         public static readonly DependencyProperty ImageProperty =
               DependencyProperty.RegisterAttached( "Image", typeof( DrawingImage ), typeof( MenuButton ), new PropertyMetadata( default( DrawingImage ) ) );

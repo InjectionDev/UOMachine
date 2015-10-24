@@ -23,7 +23,7 @@ namespace ClientHook
         public byte[] data;
     }
 
-    public class GumpResponseFilter
+    public class GumpResponseFilter : IEquatable<GumpResponseFilter>
     {
         private uint m_Serial;
         private uint m_GumpID;
@@ -42,6 +42,13 @@ namespace ClientHook
         {
             m_Serial = serial;
             m_GumpID = gumpid;
+        }
+
+        public bool Equals( GumpResponseFilter other )
+        {
+            if (( this.Serial == other.Serial ) && ( this.GumpID == other.GumpID ))
+                return true;
+            return false;
         }
     }
 
@@ -232,8 +239,10 @@ namespace ClientHook
             if (myGumpResponseFilter == null)
                 myGumpResponseFilter = new List<GumpResponseFilter>();
 
-            myGumpResponseFilter.Add( new GumpResponseFilter( serial, gumpid ) );
-            myClientInstance.SendCommand( Command.Message, String.Format("Adding 0x{0:x}, 0x{1:x} to GumpResponseFilter", serial, gumpid ) );
+            GumpResponseFilter grf = new GumpResponseFilter( serial, gumpid );
+
+            if (!myGumpResponseFilter.Contains( grf ))
+                myGumpResponseFilter.Add( grf );
         }
 
         private static unsafe void myClientInstance_sendPacketEvent( int caveAddress, PacketType packetType, byte[] data )

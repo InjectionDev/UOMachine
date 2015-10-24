@@ -41,6 +41,9 @@ namespace UOMachine
         xmfhtmlgump,
         xmfhtmlgumpcolor,
         xmfhtmltok,
-        itemproperty
+        itemproperty,
+        page,
+        group,
+        tooltip
     }
 }

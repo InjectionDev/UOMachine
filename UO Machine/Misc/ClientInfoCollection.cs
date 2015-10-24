@@ -474,7 +474,5 @@ namespace UOMachine
                 }
             }
         }
-
-
     }
 }

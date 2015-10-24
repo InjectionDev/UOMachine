@@ -18,170 +18,191 @@
 
 namespace UOMachine
 {
-    public sealed class GumpElement
+    public class GumpElement
     {
+        private Gump myParentGump;
         public Gump ParentGump
         {
             get
             {
-                if (myParentPage != null)
-                    return myParentPage.ParentGump;
+                if (myParentGump != null)
+                    return myParentGump;
+                else
+                {
+                    if (myParentPage != null)
+                        return myParentPage.ParentGump;
+                }
                 return null;
             }
+            set { myParentGump = value; }
         }
 
         private GumpPage myParentPage;
         public GumpPage ParentPage
         {
             get { return myParentPage; }
-            internal set { myParentPage = value; }
+            set { myParentPage = value; }
         }
 
         private ElementType myType;
         public ElementType Type
         {
             get { return myType; }
-            internal set { myType = value; }
+            set { myType = value; }
         }
 
         private int myX;
         public int X
         {
             get { return myX; }
-            internal set { myX = value; }
+            set { myX = value; }
         }
 
         private int myY;
         public int Y
         {
             get { return myY; }
-            internal set { myY = value; }
+            set { myY = value; }
         }
 
         private int myElementID;
         public int ElementID
         {
             get { return myElementID; }
-            internal set { myElementID = value; }
+            set { myElementID = value; }
         }
 
         private int myInactiveID;
         public int InactiveID
         {
             get { return myInactiveID; }
-            internal set { myInactiveID = value; }
+            set { myInactiveID = value; }
         }
 
         private int myActiveID;
         public int ActiveID
         {
             get { return myActiveID; }
-            internal set { myActiveID = value; }
+            set { myActiveID = value; }
+        }
+
+        private int myGroup;
+        public int Group
+        {
+            get { return myGroup; }
+            set { myGroup = value; }
         }
 
         private bool myInitialState;
         public bool InitialState
         {
             get { return myInitialState; }
-            internal set { myInitialState = value; }
+            set { myInitialState = value; }
         }
 
         private int myButtonType;
         public int ButtonType
         {
             get { return myButtonType; }
-            internal set { myButtonType = value; }
+            set { myButtonType = value; }
         }
 
         private int myParam;
         public int Param
         {
             get { return myParam; }
-            internal set { myParam = value; }
+            set { myParam = value; }
         }
 
         private int myItemID;
         public int ItemID
         {
             get { return myItemID; }
-            internal set { myItemID = value; }
+            set { myItemID = value; }
         }
 
         private int myTooltip;
         public int Tooltip
         {
             get { return myTooltip; }
-            internal set { myTooltip = value; }
+            set { myTooltip = value; }
         }
 
         private int myHue;
         public int Hue
         {
             get { return myHue; }
-            internal set { myHue = value; }
+            set { myHue = value; }
         }
 
         private int myWidth;
         public int Width
         {
             get { return myWidth; }
-            internal set { myWidth = value; }
+            set { myWidth = value; }
         }
 
         private int myHeight;
         public int Height
         {
             get { return myHeight; }
-            internal set { myHeight = value; }
+            set { myHeight = value; }
         }
 
         private int mySize;
         public int Size
         {
             get { return mySize; }
-            internal set { mySize = value; }
+            set { mySize = value; }
         }
 
         private int myCliloc;
         public int Cliloc
         {
             get { return myCliloc; }
-            internal set { myCliloc = value; }
+            set { myCliloc = value; }
         }
 
         private bool myBackground;
         public bool Background
         {
             get { return myBackground; }
-            internal set { myBackground = value; }
+            set { myBackground = value; }
         }
 
         private bool myScrollBar;
         public bool ScrollBar
         {
             get { return myScrollBar; }
-            internal set { myScrollBar = value; }
+            set { myScrollBar = value; }
         }
 
         private string myText;
         public string Text
         {
             get { return myText; }
-            internal set { myText = value; }
+            set { myText = value; }
         }
 
         private string myArgs;
         public string Args
         {
             get { return myArgs; }
-            internal set { myArgs = value; }
+            set { myArgs = value; }
         }
 
         private int mySerial;
         public int Serial
         {
             get { return mySerial; }
-            internal set { mySerial = value; }
+            set { mySerial = value; }
+        }
+
+        private int myPageNumber;
+        public int PageNumber
+        {
+            get { return myPageNumber; }
+            set { myPageNumber = value; }
         }
 
         /// <summary>
@@ -221,6 +242,238 @@ namespace UOMachine
             {
                 Macros.MacroEx.CloseClientGump(g.Client, g.ID);
                 Macros.MacroEx.GumpButtonClick(g.Client, g.Serial, g.ID, this.ElementID);
+            }
+        }
+
+        internal void AppendTo(Gump.IGumpWriter disp)
+        {
+            switch (Type)
+            {
+                case ElementType.textentrylimited:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "textentrylimited" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myWidth );
+                        disp.AppendLayout( myHeight );
+                        disp.AppendLayout( myHue );
+                        disp.AppendLayout( myElementID );
+                        disp.AppendLayout( ParentGump.Intern( myText ) );
+                        disp.AppendLayout( mySize );
+                        disp.TextEntries++;
+                        break;
+                    }
+                case ElementType.textentry:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "textentry" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myWidth );
+                        disp.AppendLayout( myHeight );
+                        disp.AppendLayout( myHue );
+                        disp.AppendLayout( myElementID );
+                        disp.AppendLayout( ParentGump.Intern( myText ) );
+                        disp.TextEntries++;
+                        break;
+                    }
+                case ElementType.radio:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "radio" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myInactiveID );
+                        disp.AppendLayout( myActiveID );
+                        disp.AppendLayout( myInitialState );
+                        disp.AppendLayout( myElementID );
+                        disp.Switches++;
+                        break;
+                    }
+                case ElementType.croppedtext:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "croppedtext" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myWidth );
+                        disp.AppendLayout( myHeight );
+                        disp.AppendLayout( myHue );
+                        disp.AppendLayout( ParentGump.Intern( myText ) );
+                        break;
+                    }
+                case ElementType.buttontileart:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer("buttontileart") );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myInactiveID );
+                        disp.AppendLayout( myActiveID );
+                        disp.AppendLayout( myButtonType );
+                        disp.AppendLayout( myParam );
+                        disp.AppendLayout( myElementID );
+                        disp.AppendLayout( myItemID );
+                        disp.AppendLayout( myHue );
+                        disp.AppendLayout( myWidth );
+                        disp.AppendLayout( myHeight );
+
+                        if (myCliloc != -1)
+                        {
+                            disp.AppendLayout( Gump.StringToBuffer( " }{ tooltip" ));
+                            disp.AppendLayout( myCliloc );
+                        }
+                        break;
+                    }
+                case ElementType.tilepic:
+                case ElementType.tilepichue:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( myHue == 0 ? "tilepic" : "tilepichue" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myItemID );
+
+                        if (myHue != 0)
+                            disp.AppendLayout( myHue );
+                        break;
+                    }
+                case ElementType.itemproperty:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "itemproperty" ) );
+                        disp.AppendLayout( mySerial );
+                        break;
+                    }
+                case ElementType.gumppictiled:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "gumppictiled" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myWidth );
+                        disp.AppendLayout( myHeight );
+                        disp.AppendLayout( myElementID );
+                        break;
+                    }
+                case ElementType.gumppic:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "gumppic" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myElementID );
+
+                        if (myHue != 0)
+                        {
+                            disp.AppendLayout( Gump.StringToBuffer( " hue=" ) );
+                            disp.AppendLayoutNS( myHue );
+                        }
+                        break;
+                    }
+                case ElementType.xmfhtmlgump:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "xmfhtmlgump" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myWidth );
+                        disp.AppendLayout( myHeight );
+                        disp.AppendLayout( myCliloc );
+                        disp.AppendLayout( myBackground );
+                        disp.AppendLayout( myScrollBar );
+                        break;
+                    }
+                case ElementType.xmfhtmlgumpcolor:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "xmfhtmlgumpcolor" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myWidth );
+                        disp.AppendLayout( myHeight );
+                        disp.AppendLayout( myCliloc );
+                        disp.AppendLayout( myBackground );
+                        disp.AppendLayout( myScrollBar );
+                        disp.AppendLayout( myHue );
+                        break;
+                    }
+                case ElementType.xmfhtmltok:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "xmfhtmltok" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myWidth );
+                        disp.AppendLayout( myHeight );
+                        disp.AppendLayout( myBackground );
+                        disp.AppendLayout( myScrollBar );
+                        disp.AppendLayout( myHue );
+                        disp.AppendLayout( myCliloc );
+                        disp.AppendLayout( myArgs );
+                        break;
+                    }
+                case ElementType.htmlgump:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "htmlgump" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myWidth );
+                        disp.AppendLayout( myHeight );
+                        disp.AppendLayout( ParentGump.Intern( myText ) );
+                        disp.AppendLayout( myBackground );
+                        disp.AppendLayout( myScrollBar );
+                        break;
+                    }
+                case ElementType.tooltip:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "tooltip" ) );
+                        disp.AppendLayout( myCliloc );
+                        break;
+                    }
+                case ElementType.group:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "group" ) );
+                        disp.AppendLayout( myGroup );
+                        break;
+                    }
+                case ElementType.resizepic:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "resizepic" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myElementID );
+                        disp.AppendLayout( myWidth );
+                        disp.AppendLayout( myHeight );
+                        break;
+                    }
+                case ElementType.checkertrans:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "checkertrans" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myWidth );
+                        disp.AppendLayout( myHeight );
+                        break;
+                    }
+                case ElementType.page:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "page" ) );
+                        disp.AppendLayout( myPageNumber );
+                        break;
+                    }
+                case ElementType.button:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer("button") );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myInactiveID );
+                        disp.AppendLayout( myActiveID );
+                        disp.AppendLayout( myButtonType );
+                        disp.AppendLayout( myParam );
+                        disp.AppendLayout( myElementID );
+                        break;
+                    }
+                case ElementType.text:
+                    {
+                        disp.AppendLayout( Gump.StringToBuffer( "text" ) );
+                        disp.AppendLayout( myX );
+                        disp.AppendLayout( myY );
+                        disp.AppendLayout( myHue );
+                        disp.AppendLayout( ParentGump.Intern( myText ) );
+                        break;
+                    }
+                default:
+                    break;
             }
         }
     }

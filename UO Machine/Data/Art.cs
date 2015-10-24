@@ -17,13 +17,15 @@ namespace UOMachine.Data
         public int Height;
         public Bitmap Bitmap;
         public BitmapSource BitmapSource;
+        public Rectangle Bounds;
 
-        public ArtData( int width, int height, Bitmap bmp, BitmapSource bitmapSource )
+        public ArtData( int width, int height, Bitmap bmp, BitmapSource bitmapSource, Rectangle bounds )
         {
             this.Width = width;
             this.Height = height;
             this.Bitmap = bmp;
             this.BitmapSource = bitmapSource;
+            this.Bounds = bounds;
         }
     }
 
@@ -216,7 +218,7 @@ namespace UOMachine.Data
             artFile = File.Open( fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite );
 
             if (artFile == null)
-                return new ArtData( 0, 0, null, null );
+                return new ArtData( 0, 0, null, null, new Rectangle(0, 0, 0, 0) );
 
             Entry3D entry = m_Index[itemId];
 
@@ -230,7 +232,7 @@ namespace UOMachine.Data
                 int height = reader.ReadInt16();
 
                 if (width <= 0 || height <= 0)
-                    return new ArtData( 0, 0, null, null );
+                    return new ArtData( 0, 0, null, null, new Rectangle(0, 0, 0, 0) );
 
                 int[] lookups = new int[height];
 
@@ -246,6 +248,11 @@ namespace UOMachine.Data
                 ushort* line = (ushort*) bd.Scan0;
                 int delta = bd.Stride >> 1;
 
+                int smallestX, largestX = 0;
+                smallestX = width;
+                int smallestY, largestY = 0;
+                smallestY = height;
+
                 for (int y = 0; y < height; y++, line += delta)
                 {
                     reader.BaseStream.Seek( lookups[y], SeekOrigin.Begin );
@@ -256,23 +263,35 @@ namespace UOMachine.Data
                     int xOffset, xRun;
                     int x = 0;
 
+                    if (y > largestY)
+                        largestY = y + 1;
+
+                    if (y < smallestY)
+                        smallestY = y;
+
                     while (( ( xOffset = reader.ReadUInt16() ) + ( xRun = reader.ReadUInt16() ) ) != 0)
                     {
                         cur += xOffset;
                         end = cur + xRun;
                         x += xOffset;
 
+                        if (x < smallestX)
+                            smallestX = x;
+
                         while (cur < end)
                         {
                             *cur++ = (ushort) ( reader.ReadUInt16() ^ 0x8000 );
                             x++;
                         }
+
+                        if (x > largestX)
+                            largestX = x;
                     }
                 }
 
                 bmp.UnlockBits( bd );
 
-                ArtData imageData = new ArtData( width, height, bmp, Imaging.CreateBitmapSourceFromHBitmap( bmp.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight( bmp.Width, bmp.Height ) ) );
+                ArtData imageData = new ArtData( width, height, bmp, Imaging.CreateBitmapSourceFromHBitmap( bmp.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromWidthAndHeight( bmp.Width, bmp.Height ) ), new Rectangle(smallestX, smallestY, largestX, largestY) );
                 if (!m_Cache.ContainsKey( itemId ))
                     m_Cache.Add( itemId, imageData );
 

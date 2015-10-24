@@ -68,12 +68,17 @@
   <ItemGroup>
     <Compile Include="ClilocTests.cs" />
     <Compile Include="CursorAddressTests.cs" />
+    <Compile Include="GumpTest.cs" />
     <Compile Include="LoginServerTest.cs" />
     <Compile Include="MapTests.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClientHook\ClientHook.csproj">
+      <Project>{280a0414-f1d7-4764-8ebb-b3826703c45d}</Project>
+      <Name>ClientHook</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UO Machine\UO Machine.csproj">
       <Project>{345bb973-6fa1-4152-aebb-61f406e0cf26}</Project>
       <Name>UO Machine</Name>

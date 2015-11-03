@@ -15,6 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with UO Machine.  If not, see <http://www.gnu.org/licenses/>. */
 
+using System;
+using System.Collections.Generic;
 using UOMachine.Events;
 
 namespace UOMachine.Data
@@ -37,8 +39,64 @@ namespace UOMachine.Data
             Register(0x6C, 19, new OnPacketReceive(OnTargetSent));
             Register(0xB1,  0, new OnPacketReceive(OnGumpButtonPressed));
             Register(0xBF,  0, new OnPacketReceive(OnExtendedCommand));
+            Register(0xAD,  0, new OnPacketReceive(OnUnicodeSpeech));
 
             RegisterExtended(0x1A, 0, new OnPacketReceive(OnStatLockChanged));
+        }
+
+        private static void OnUnicodeSpeech( int client, PacketReader reader )
+        {
+            byte messagetype = reader.ReadByte();
+            int color = reader.ReadInt16();
+            int font = reader.ReadInt16();
+            string lang = reader.ReadString( 4 );
+            string text;
+
+            int[] keywords;
+
+            if ((messagetype & 0xC0) != 0)
+            {
+                int value = reader.ReadInt16();
+                int count = ( value & 0xFFF0 ) >> 4;
+                int hold = value & 0xF;
+
+                if (count < 0 || count > 50)
+                    return;
+
+                List<int> keyList = new List<int>();
+
+                for (int i = 0; i < count; ++i)
+                {
+                    int speechID;
+
+                    if (( i & 1 ) == 0)
+                    {
+                        hold <<= 8;
+                        hold |= reader.ReadByte();
+                        speechID = hold;
+                        hold = 0;
+                    }
+                    else
+                    {
+                        value = reader.ReadInt16();
+                        speechID = ( value & 0xFFF0 ) >> 4;
+                        hold = value & 0xF;
+                    }
+
+                    if (!keyList.Contains( speechID ))
+                        keyList.Add( speechID );
+                }
+
+                text = reader.ReadStringSafe();
+
+                keywords = keyList.ToArray();
+            }
+            else
+            {
+                keywords = new int[0];
+                text = reader.ReadUnicodeStringSafe();
+            }
+            OutgoingPackets.OnUnicodeSpeech( client, messagetype, color, font, lang, keywords, text );
         }
 
         private static void OnMoveRequested(int client, PacketReader reader)

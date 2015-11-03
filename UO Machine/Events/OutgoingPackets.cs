@@ -33,6 +33,7 @@ namespace UOMachine.Events
         public delegate void dDragItemRequested(int client, int serial, int amount);
         public delegate void dDropItemRequested(int client, int serial, int x, int y, int z, int containerSerial);
         public delegate void dGumpButtonPressed(int client, int serial, int gumpID, int buttonID, int[] switches);
+        public delegate void dUnicodeSpeech( int client, int messagetype, int color, int font, string lang, int[] keyworkds, string text );
 
         private static object myGumpButtonPressedLock = new object();
         private static event dGumpButtonPressed myGumpButtonPressedEvent;
@@ -106,6 +107,15 @@ namespace UOMachine.Events
             remove { lock (myMoveRequestedLock) { myMoveRequestedEvent -= value; } }
         }
 
+        private static object myUnicodeSpeechLock = new object();
+        private static event dUnicodeSpeech myUnicodeSpeechEvent;
+        internal static event dUnicodeSpeech InternalUnicodeSpeechEvent;
+        public static event dUnicodeSpeech UnicodeSpeechEvent
+        {
+            add {  lock (myUnicodeSpeechLock) { myUnicodeSpeechEvent += value; } }
+            remove { lock (myUnicodeSpeechLock) { myUnicodeSpeechEvent -= value; } }
+        }
+
         /// <summary>
         /// Reset all public events.
         /// </summary>
@@ -119,6 +129,18 @@ namespace UOMachine.Events
             lock (myDragItemRequestedLock) { myDragItemRequestedEvent = null; }
             lock (myDropItemRequestedLock) { myDropItemRequestedEvent = null; }
             lock (myGumpButtonPressedLock) { myGumpButtonPressedEvent = null; }
+            lock (myUnicodeSpeechLock) { myUnicodeSpeechEvent = null; }
+        }
+
+        internal static void OnUnicodeSpeech(int client, int messagetype, int color, int font, string lang, int[] keywords, string text)
+        {
+            dUnicodeSpeech handler = InternalUnicodeSpeechEvent;
+            if (handler != null) handler( client, messagetype, color, font, lang, keywords, text );
+            lock (myUnicodeSpeechLock)
+            {
+                handler = myUnicodeSpeechEvent;
+                if (handler != null) handler( client, messagetype, color, font, lang, keywords, text );
+            }
         }
 
         internal static void OnMoveRequested(int client, int direction, int sequence)

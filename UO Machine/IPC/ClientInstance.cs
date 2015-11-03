@@ -39,9 +39,6 @@ namespace UOMachine.IPC
         public event dInstallRecvHook InstallRecvHookEvent;
         public event dUninstallSendHook UninstallSendHookEvent;
         public event dUninstallRecvHook UninstallRecvHookEvent;
-        public event dAddGumpResponseFilter AddGumpResponseFilterEvent;
-        //public event dRemoveGumpResponseFilter RemoveGumpResponseFilterEvent;
-        //public event dClearGumpResponseFilter ClearGumpResponseFilterEvent;
 
         private const int myBuffSize = 131072;
         private MemoryStream myMemoryStream;
@@ -140,15 +137,39 @@ namespace UOMachine.IPC
                     }
                     return;
                 case Command.AddSendFilter:
-                    dAddSendFilter addSendFilter = AddSendFilterEvent;
-                    if (addSendFilter != null)
-                        ThreadPool.QueueUserWorkItem( delegate { addSendFilter( message[1] ); } );
-                    return;
+                    {
+                        dAddSendFilter addSendFilter = AddSendFilterEvent;
+                        if (addSendFilter != null)
+                            ThreadPool.QueueUserWorkItem( delegate { addSendFilter( message[1], null ); } );
+                        return;
+                    }
+                case Command.AddSendFilterConditional:
+                    {
+                        dAddSendFilter addSendFilter = AddSendFilterEvent;
+                        if (addSendFilter != null)
+                        {
+                            PacketFilterInfo pfi = PacketFilterInfo.Deserialize( message );
+                            ThreadPool.QueueUserWorkItem( delegate { addSendFilter( (byte)pfi.PacketID, pfi.Conditions ); } );
+                        }
+                        return;
+                    }
                 case Command.AddRecvFilter:
-                    dAddRecvFilter addRecvFilter = AddRecvFilterEvent;
-                    if (addRecvFilter != null)
-                        ThreadPool.QueueUserWorkItem( delegate { addRecvFilter( message[1] ); } );
-                    return;
+                    {
+                        dAddRecvFilter addRecvFilter = AddRecvFilterEvent;
+                        if (addRecvFilter != null)
+                            ThreadPool.QueueUserWorkItem( delegate { addRecvFilter( message[1], null ); } );
+                        return;
+                    }
+                case Command.AddRecvFilterConditional:
+                    {
+                        dAddRecvFilter addRecvFilter = AddRecvFilterEvent;
+                        if (addRecvFilter != null)
+                        {
+                            PacketFilterInfo pfi = PacketFilterInfo.Deserialize( message );
+                            ThreadPool.QueueUserWorkItem( delegate { addRecvFilter( (byte) pfi.PacketID, pfi.Conditions ); } );
+                        }
+                        return;
+                    }
                 case Command.RemoveRecvFilter:
                     dRemoveRecvFilter removeRecvFilter = RemoveRecvFilterEvent;
                     if (removeRecvFilter != null)
@@ -189,14 +210,6 @@ namespace UOMachine.IPC
                     if (uninstallRecvHook != null)
                         ThreadPool.QueueUserWorkItem( delegate { uninstallRecvHook(); } );
                     return;
-                case Command.AddGumpResponseFilter:
-                    dAddGumpResponseFilter addGumpResponseFilter = AddGumpResponseFilterEvent;
-                    if (addGumpResponseFilter != null) {
-                        uint serial = BitConverter.ToUInt32( message, 1 );
-                        uint gumpid = BitConverter.ToUInt32( message, 5 );
-                        ThreadPool.QueueUserWorkItem( delegate { addGumpResponseFilter(serial, gumpid); } );
-                    }
-                    return;
             }
         }
 
@@ -204,18 +217,19 @@ namespace UOMachine.IPC
         {
             try
             {
-                int received = myNamedPipeClientStream.EndRead(asyncResult);
+                int received = myNamedPipeClientStream.EndRead( asyncResult );
                 if (received > 0)
                 {
                     lock (myMemoryStreamLock)
                     {
-                        myMemoryStream.Write(myBuffer, 0, received);
-                        Monitor.Pulse(myMemoryStreamLock);
+                        myMemoryStream.Write( myBuffer, 0, received );
+                        Monitor.Pulse( myMemoryStreamLock );
                     }
                 }
-                myNamedPipeClientStream.BeginRead(myBuffer, 0, myBuffer.Length, new AsyncCallback(OnClientReceive), null);
+                myNamedPipeClientStream.BeginRead( myBuffer, 0, myBuffer.Length, new AsyncCallback( OnClientReceive ), null );
             }
             catch (OperationCanceledException) { }
+            catch (ObjectDisposedException) { }
         }
 
         /// <summary>
@@ -422,42 +436,24 @@ namespace UOMachine.IPC
             }
         }
 
-        #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
-
-        void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects).
-                    myMemoryStream.Dispose();
-                    myNamedPipeClientStream.Dispose();
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-
-                disposedValue = true;
-            }
-        }
-
-        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-        // ~ClientInstance() {
-        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-        //   Dispose(false);
-        // }
-
-        // This code added to correctly implement the disposable pattern.
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-            Dispose(true);
-            // TODO: uncomment the following line if the finalizer is overridden above.
-            // GC.SuppressFinalize(this);
-        }
-        #endregion
+            myThreadRunning = false;
+            lock (myMemoryStreamLock) { Monitor.Pulse( myMemoryStreamLock ); }
 
+            if (myThread.IsAlive)
+            {
+                myThread.Abort();
+                myThread.Join();
+            }
+
+            if (myNamedPipeClientStream != null)
+            {
+                myNamedPipeClientStream.Dispose();
+            }
+
+            if (myMemoryStream != null)
+                myMemoryStream.Dispose();
+        }
     }
 }

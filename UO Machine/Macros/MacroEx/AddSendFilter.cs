@@ -28,9 +28,18 @@ namespace UOMachine.Macros
     {
         public static void AddSendFilter(int client, byte packetID)
         {
+            AddSendFilter( client, packetID, null );
+        }
+
+        public static void AddSendFilter( int client, byte packetID, PacketFilterCondition[] conditions )
+        {
             ClientInfo ci;
-            if (ClientInfoCollection.GetClient(client, out ci))
-                Network.SendCommand(ci.IPCServerIndex, Command.AddSendFilter, packetID);
+            if (ClientInfoCollection.GetClient( client, out ci ))
+            {
+                PacketFilterInfo pfi = new PacketFilterInfo( packetID, conditions );
+                byte[] bytes = pfi.Serialize();
+                Network.SendCommand( ci.IPCServerIndex, Command.AddSendFilterConditional, bytes );
+            }
         }
 
         public static void RemoveSendFilter(int client, byte packetID)

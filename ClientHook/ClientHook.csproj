@@ -12,8 +12,9 @@
     <AssemblyName>ClientHook</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>snk.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
     <StartupObject>
     </StartupObject>
     <FileUpgradeFlags>
@@ -32,7 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -52,7 +53,7 @@
   <ItemGroup>
     <Reference Include="EasyHook, Version=2.7.4761.0, Culture=neutral, PublicKeyToken=4b580fca19d0b0c5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\NetFX3.5\EasyHook.dll</HintPath>
+      <HintPath>..\UO Machine\Libraries\EasyHook.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -71,9 +72,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MessageHook\MsgHook.cs" />
     <Compile Include="MessageHook\NativeMethods.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="snk.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UO Machine\UO Machine.csproj">

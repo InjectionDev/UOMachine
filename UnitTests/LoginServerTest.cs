@@ -58,7 +58,7 @@ namespace UnitTests
         private static string m_Address;
         public static object m_AddressLock;
 
-        [TestMethod]
+        [TestCategory( "Network" ), TestCategory( "Network\\LoginServer" ), TestMethod]
         public void LoginServer70022()
         {
             string address = Start(@"D:\Clients\7.0.2.2");
@@ -66,7 +66,7 @@ namespace UnitTests
             Assert.AreEqual("127.0.0.1,2593", address);
         }
 
-        [TestMethod]
+        [TestCategory( "Network" ), TestCategory( "Network\\LoginServer" ), TestMethod]
         public void LoginServer70200()
         {
             string address = Start(@"D:\Clients\7.0.20.0");
@@ -74,7 +74,7 @@ namespace UnitTests
             Assert.AreEqual("127.0.0.1,2593", address);
         }
 
-        [TestMethod]
+        [TestCategory( "Network" ), TestCategory( "Network\\LoginServer" ), TestMethod]
         public void LoginServer70351()
         {
             string address = Start(@"D:\Clients\7.0.35.1");
@@ -82,7 +82,7 @@ namespace UnitTests
             Assert.AreEqual("127.0.0.1,2593", address);
         }
 
-        [TestMethod]
+        [TestCategory( "Network" ), TestCategory( "Network\\LoginServer" ), TestMethod]
         public void LoginServer70450()
         {
             string address = Start(@"D:\Clients\7.0.45.0");
@@ -90,7 +90,7 @@ namespace UnitTests
             Assert.AreEqual("127.0.0.1,2593", address);
         }
 
-        [TestMethod]
+        [TestCategory( "Network" ), TestCategory( "Network\\LoginServer" ), TestMethod]
         public void LoginServer70462()
         {
             string address = Start( @"D:\Clients\7.0.46.2" );
@@ -139,7 +139,7 @@ namespace UnitTests
                     ci.InstallMacroHook();
                     Macro.ChangeServer(instance, "127.0.0.1", 2593);
 
-                    Thread.Sleep(6000);
+                    Thread.Sleep(10000);
 
                     lock (m_AddressLock)
                     {

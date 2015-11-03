@@ -30,7 +30,20 @@ namespace UOMachine.Macros
         {
             ClientInfo ci;
             if (ClientInfoCollection.GetClient( client, out ci ))
-                Network.SendCommand( ci.IPCServerIndex, Command.AddGumpResponseFilter, (int)serial, (int)gumpid, 0 );
+            {
+                byte[] bserial = new byte[4];
+                byte[] bgumpid = new byte[4];
+                bserial[0] = (byte) ( serial >> 24 );
+                bserial[1] = (byte) ( serial >> 16 );
+                bserial[2] = (byte) ( serial >> 8 );
+                bserial[3] = (byte) ( serial );
+                bgumpid[0] = (byte) ( gumpid >> 24 );
+                bgumpid[1] = (byte) ( gumpid >> 16 );
+                bgumpid[2] = (byte) ( gumpid >> 8 );
+                bgumpid[3] = (byte) ( gumpid );
+
+                AddSendFilter( client, 0xB1, new PacketFilterCondition[] { new PacketFilterCondition( 3, bserial, 4 ), new PacketFilterCondition( 7, bgumpid, 4 ) } );
+            }
         }
 
         //public static void RemoveGumpResponseFilter( int client, int serial, int gumpid )

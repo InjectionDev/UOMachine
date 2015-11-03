@@ -20,7 +20,7 @@ using System.IO;
 
 namespace UOMachine.Data
 {
-    internal class PacketReader
+    public class PacketReader
     {
         private byte[] m_Data;
         private int m_Size;
@@ -91,6 +91,16 @@ namespace UOMachine.Data
                 return 0;
 
             return m_Data[m_Index++];
+        }
+
+        public byte[] ReadByteArray(int length)
+        {
+            byte[] bytes = new byte[length];
+            for (int i = 0; i < length;i++)
+            {
+                bytes[i] = ReadByte();
+            }
+            return bytes;
         }
 
         public uint ReadUInt32()

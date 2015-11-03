@@ -31,5 +31,18 @@ namespace UOMachine.Macros
         {
             return ClientInfoCollection.FindMobile(client, id, out mobile);
         }
+
+        /// <summary>
+        /// Get Mobile with specified serial on specified layer.
+        /// </summary>
+        /// <param name="client">Target client.</param>
+        /// <param name="layer">Layer to search on.</param>
+        /// <param name="serial">Item serial to find.</param>
+        /// <param name="mobile">Mobile (out).</param>
+        /// <returns>True on success.</returns>
+        public static bool FindMobileByLayerSerial(int client, Layer layer, int serial, out Mobile mobile)
+        {
+            return ClientInfoCollection.FindMobileByLayerSerial( client, layer, serial, out mobile );
+        }
     }
 }

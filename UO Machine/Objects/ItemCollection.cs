@@ -294,7 +294,7 @@ namespace UOMachine
             Item[] items = this.GetItems();
             for (int i = 0; i < items.Length; i++)
             {
-                if (items[i].Owner == 0 && UOMath.Distance(x, y, items[i].X, items[i].Y) > maxDistance)
+                if (items[i] != null && items[i].Owner == 0 && UOMath.Distance(x, y, items[i].X, items[i].Y) > maxDistance)
                 {
                     this.Remove(items[i].Serial);
                 }

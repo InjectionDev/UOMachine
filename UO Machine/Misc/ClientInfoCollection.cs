@@ -228,6 +228,23 @@ namespace UOMachine
         }
 
         /// <summary>
+        /// Find mobile with specified serial on selected layer.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="layer"></param>
+        /// <param name="serial"></param>
+        /// <param name="mobile"></param>
+        /// <returns></returns>
+        public static bool FindMobileByLayerSerial(int index, Layer layer, int serial, out Mobile mobile)
+        {
+            ClientInfo ci;
+            if (GetClient( index, out ci ))
+                return ci.Mobiles.FindMobileByLayerSerial( layer, serial, out mobile );
+            mobile = null;
+            return false;
+        }
+
+        /// <summary>
         /// Find all mobiles with matching ID in specified client.
         /// </summary>
         /// <returns>True on success.</returns>

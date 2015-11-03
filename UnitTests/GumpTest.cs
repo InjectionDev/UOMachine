@@ -57,18 +57,6 @@ namespace UnitTests
             {
                 Assert.AreEqual( packet[i], packet2[i], String.Format("No match at position {0}", i ) );
             }
-
-            List<GumpResponseFilter> grf = new List<GumpResponseFilter>();
-
-            grf.Add( new GumpResponseFilter( 0xFFFFFFFF, 0xFFFFFFFF ) );
-
-            bool contains = grf.Contains( new GumpResponseFilter( 0xFFFFFFFF, 0xFFFFFFFF ) );
-            Assert.IsTrue( contains );
-
-            grf.Clear();
-            contains = grf.Contains( new GumpResponseFilter( 0xFFFFFFFF, 0xFFFFFFFF ) );
-            Assert.IsFalse( contains );
-
         }
     }
 }

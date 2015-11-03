@@ -2,22 +2,12 @@ UOMLog*
 output/*
 *obj/*
 *.suo
-EasyHook/*
-NetFX3.5/*
 ClientHook/obj/*
 RazorLoader/obj/*
 UO Machine/obj/*
 UO Machine.v11.suo
-UO Machine.v11.suo
-Updater/obj/*
-Updater/bin/*
-Debug
-Loader/Release/
 UO Machine.sdf
-UO Machine/Misc/SteamLauncher - Copy.cs
-ipch/
-patch.diff.txt
 UO Machine.opensdf
-output.zip
 UnitTests/bin/
 UnitTests/obj/
+Updater/obj/

@@ -75,6 +75,27 @@ namespace UOMachine
             return false;
         }
 
+        public bool FindMobileByLayerSerial(Layer layer, int serial, out Mobile mobile)
+        {
+            lock (mySyncRoot)
+            {
+                foreach (Mobile m in myMobileList.Values)
+                {
+                    Item item;
+                    if (m.GetEquippedItem( layer, out item ))
+                    {
+                        if (item.Serial == serial)
+                        {
+                            mobile = m;
+                            return true;
+                        }
+                    }
+                }
+            }
+            mobile = null;
+            return false;
+        }
+
         public bool FindMobiles(int id, out Mobile[] mobiles)
         {
             List<Mobile> mobileList = new List<Mobile>();
@@ -169,6 +190,9 @@ namespace UOMachine
             Mobile[] mobileArray = this.GetMobiles();
             for (int i = 0; i < mobileArray.Length; i++)
             {
+                if (mobileArray[i] == null)
+                    continue;
+
                 double d = UOMath.Distance(x, y, mobileArray[i].X, mobileArray[i].Y);
                 if (d > maxDistance)
                 {

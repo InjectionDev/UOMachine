@@ -26,11 +26,20 @@ namespace UOMachine.Macros
 {
     public static partial class MacroEx
     {
-        public static void AddRecvFilter( int client, byte packetID)
+        public static void AddRecvFilter(int client, byte packetID)
+        {
+            AddRecvFilter( client, packetID, null );
+        }
+
+        public static void AddRecvFilter( int client, byte packetID, PacketFilterCondition[] conditions)
         {
             ClientInfo ci;
             if (ClientInfoCollection.GetClient( client, out ci ))
-                Network.SendCommand( ci.IPCServerIndex, Command.AddRecvFilter, packetID );
+            {
+                PacketFilterInfo pfi = new PacketFilterInfo( packetID, conditions );
+                byte[] bytes = pfi.Serialize();
+                Network.SendCommand( ci.IPCServerIndex, Command.AddRecvFilterConditional, bytes );
+            }
         }
 
         public static void RemoveRecvFilter( int client, byte packetID )

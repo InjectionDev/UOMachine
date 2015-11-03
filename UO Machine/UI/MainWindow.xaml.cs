@@ -21,6 +21,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.CodeCompletion;
 using ICSharpCode.AvalonEdit.Folding;
 using System.Threading.Tasks;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace UOMachine
 {
@@ -403,8 +404,14 @@ namespace UOMachine
 
         private void FormatDocument_Click( object sender, RoutedEventArgs e )
         {
-            scriptTextBox.Text = DocumentHelper.Format( scriptTextBox.Text, scriptTextBox.Options.IndentationString );
-            TextEditorOptions teo = scriptTextBox.Options;
+            CSharpFormattingOptions policy = FormattingOptionsFactory.CreateAllman();
+            CSharpParser parser = new CSharpParser();
+            SyntaxTree tree = parser.Parse( scriptTextBox.Text );
+            StringWriter writer = new StringWriter();
+            CSharpOutputVisitor outputVisitor = new CSharpOutputVisitor( writer, policy );
+            outputVisitor.VisitSyntaxTree( tree );
+
+            scriptTextBox.Text = writer.ToString();
         }
 
         private void AddReference_Click( object sender, RoutedEventArgs e )

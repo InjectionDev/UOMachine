@@ -86,14 +86,14 @@ namespace UOMachine
             }
 
             if (!MainWindow.CurrentOptions.IsValid()) return false;
-            try { Config.Register( "UOM hooks", Path.Combine( StartupPath, "UOMachine.exe" ), Path.Combine( StartupPath, "ClientHook.dll" ) ); }
-            catch (Exception ex)
-            {
-                Utility.Log.LogMessage( ex );
-                /* Ensure EasyHook files are in output directory if you get this error */
-                System.Windows.MessageBox.Show( Strings.ErrorwithGACinstallation );
-                return false;
-            }
+            //try { Config.Register( "UOM hooks", Path.Combine( StartupPath, "UOMachine.exe" ), Path.Combine( StartupPath, "ClientHook.dll" ) ); }
+            //catch (Exception ex)
+            //{
+            //    Utility.Log.LogMessage( ex );
+            //    /* Ensure EasyHook files are in output directory if you get this error */
+            //    System.Windows.MessageBox.Show( Strings.ErrorwithGACinstallation );
+            //    return false;
+            //}
             myMainWindow = mainWindow;
             InternalEventHandler.IncomingPacketHandler.Initialize();
             InternalEventHandler.OutgoingPacketHandler.Initialize();

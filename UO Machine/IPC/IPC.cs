@@ -59,8 +59,8 @@ namespace UOMachine.IPC
     public delegate void dKeyDown(int clientID, Keys key);
     public delegate void dKeyUp(int clientID, Keys key);
     public delegate void dSendPacket(int caveAddress, PacketType packetType, byte[] data);
-    public delegate void dAddSendFilter(byte packetID);
-    public delegate void dAddRecvFilter(byte packetID);
+    public delegate void dAddSendFilter(byte packetID, PacketFilterCondition[] conditions);
+    public delegate void dAddRecvFilter(byte packetID, PacketFilterCondition[] conditions);
     public delegate void dRemoveSendFilter(byte packetID);
     public delegate void dRemoveRecvFilter(byte packetID);
     public delegate void dClearSendFilter();
@@ -113,6 +113,8 @@ namespace UOMachine.IPC
         IncomingPacket,      //sent by client           size: variable
         OutgoingPacket,      //sent by client           size: variable
         SendPacket,          //sent by server           size: variable
+        AddRecvFilterConditional,
+        AddSendFilterConditional,
 
         //RemoveGumpResponseFilter,
         //ClearGumpResponseFilter

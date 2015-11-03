@@ -72,6 +72,7 @@
     <Compile Include="LoginServerTest.cs" />
     <Compile Include="MapTests.cs" />
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="PacketFilterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
